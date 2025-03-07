@@ -18,7 +18,7 @@ class SearchToolKit:
             self.google_search = Tool(
                 name="Google_Search",
                 description="Search Google for recent results.",
-                func=self._google_wrapper.run
+                func=self._google_wrapper.run,
             )
         except Exception as e:
             print(f"Failed to initialize Google Search: {str(e)}")
@@ -29,7 +29,7 @@ class SearchToolKit:
         Returns:
             List[Tool]: List of available search tools
         """
-        tools = [self.ddg_search, self.youtube_search]
+        tools = [self.youtube_search]
         if self.google_search:
             tools.append(self.google_search)
         return tools

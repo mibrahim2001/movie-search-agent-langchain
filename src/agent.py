@@ -8,7 +8,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from typing import Generator, Dict, Any
 from langchain_core.runnables import RunnableConfig
 class MovieSearchAgent:
-    def __init__(self, model_name: str = "gpt-4o-mini", model_provider: str = "openai"):
+    def __init__(self, model_name: str = "gpt-4", model_provider: str = "openai"):
         load_dotenv()
         
         # Initialize components
