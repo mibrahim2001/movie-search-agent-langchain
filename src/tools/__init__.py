@@ -1,4 +1,4 @@
 from .search_tool import SearchTool
-from .youtube_search import youtube_search
+from .youtube_search import search_youtube
 
-__all__ = ['SearchTool', 'youtube_search'] 
+__all__ = ['SearchTool', 'search_youtube'] 

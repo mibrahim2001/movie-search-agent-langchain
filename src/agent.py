@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage
 from langgraph.prebuilt import create_react_agent
-from tools import SearchTool, youtube_search
+from tools import SearchTool, search_youtube
 from utility import load_system_prompt
 import os
 
@@ -12,16 +12,11 @@ load_dotenv()  # Load environment variables from .env file
 search_tool = SearchTool(preferred_engine="duckduckgo").get_search_tool()
 
 model = init_chat_model("gpt-4", model_provider="openai")
-tools = [search_tool, youtube_search]
+tools = [search_tool, search_youtube]
 
-# Load system prompt from markdown file
-def load_system_prompt():
-    prompt_path = os.path.join(os.path.dirname(__file__), "prompts", "system_prompt.md")
-    with open(prompt_path, "r", encoding="utf-8") as f:
-        return f.read().strip()
 
 system_message = load_system_prompt()
-agent_executor = create_react_agent(model, tools, prompt=system_message)
+agent_executor = create_react_agent(model, tools, prompt=system_message, verbose=True)
 
 for step in agent_executor.stream(
     {"messages": [HumanMessage(content="3 Idiots movie")]},
