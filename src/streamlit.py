@@ -1,60 +1,58 @@
-from langchain.agents import ConversationalChatAgent, AgentExecutor
-from langchain.memory import ConversationBufferMemory
-from langchain_community.callbacks import StreamlitCallbackHandler
-from langchain_community.chat_message_histories import StreamlitChatMessageHistory
-from langchain_community.tools import DuckDuckGoSearchRun
-from langchain_core.runnables import RunnableConfig
-from langchain_openai import ChatOpenAI
-
 import streamlit as st
+from agent import MovieSearchAgent
+from langchain_community.chat_message_histories import StreamlitChatMessageHistory
+from langchain_community.callbacks import StreamlitCallbackHandler
+import os
 
-st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
+st.set_page_config(page_title="Movie Search Agent", page_icon="🎬")
 st.title("Movie Search Agent")
 
+# Initialize session state
+if "agent" not in st.session_state:
+    st.session_state.agent = None
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# OpenAI API Key handling
 openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+if openai_api_key:
+    os.environ["OPENAI_API_KEY"] = openai_api_key
 
-msgs = StreamlitChatMessageHistory()
-memory = ConversationBufferMemory(
-    chat_memory=msgs, return_messages=True, memory_key="chat_history", output_key="output"
-)
-if len(msgs.messages) == 0 or st.sidebar.button("Reset chat history"):
-    msgs.clear()
-    msgs.add_ai_message("How can I help you?")
-    st.session_state.steps = {}
+# Initialize or reset the agent
+if st.sidebar.button("Reset Chat") or not st.session_state.agent:
+    if openai_api_key:
+        st.session_state.agent = MovieSearchAgent()
+        st.session_state.messages = []
+        st.session_state.messages.append({"role": "assistant", "content": "How can I help you find movies today?"})
 
-avatars = {"human": "user", "ai": "assistant"}
-for idx, msg in enumerate(msgs.messages):
-    with st.chat_message(avatars[msg.type]):
-        # Render intermediate steps if any were saved
-        for step in st.session_state.steps.get(str(idx), []):
-            if step[0].tool == "_Exception":
-                continue
-            with st.status(f"**{step[0].tool}**: {step[0].tool_input}", state="complete"):
-                st.write(step[0].log)
-                st.write(step[1])
-        st.write(msg.content)
+# Display chat messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-if prompt := st.chat_input(placeholder="Tell me about the movie Top Gun"):
-    st.chat_message("user").write(prompt)
-
+# Chat input
+if prompt := st.chat_input(placeholder="Tell me about a movie..."):
     if not openai_api_key:
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
 
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=openai_api_key, streaming=True)
-    tools = [DuckDuckGoSearchRun(name="Search")]
-    chat_agent = ConversationalChatAgent.from_llm_and_tools(llm=llm, tools=tools)
-    executor = AgentExecutor.from_agent_and_tools(
-        agent=chat_agent,
-        tools=tools,
-        memory=memory,
-        return_intermediate_steps=True,
-        handle_parsing_errors=True,
-    )
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.write(prompt)
+
+    # Get agent response
     with st.chat_message("assistant"):
-        st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
-        cfg = RunnableConfig()
-        cfg["callbacks"] = [st_cb]
-        response = executor.invoke(prompt, cfg)
-        st.write(response["output"])
-        st.session_state.steps[str(len(msgs.messages) - 1)] = response["intermediate_steps"]
+        message_placeholder = st.empty()
+        full_response = ""
+        
+        # Stream the agent's response
+        for step in st.session_state.agent.get_response(prompt):
+            print(step)
+            print("--------------------------------")
+            response = step["messages"][-1].content
+            full_response = response
+            message_placeholder.write(full_response)
+        
+        # Add assistant's response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
