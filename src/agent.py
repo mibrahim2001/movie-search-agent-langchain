@@ -6,7 +6,7 @@ from tools.search_tool_kit import SearchToolKit
 from utility import load_system_prompt
 from langgraph.checkpoint.memory import MemorySaver
 from typing import Generator, Dict, Any
-
+from langchain_core.runnables import RunnableConfig
 class MovieSearchAgent:
     def __init__(self, model_name: str = "gpt-4o-mini", model_provider: str = "openai"):
         load_dotenv()
@@ -25,6 +25,12 @@ class MovieSearchAgent:
             self.tools,
             prompt=self.system_message,
             checkpointer=self.memory
+        )
+
+    def invoke_agent(self, user_input: str, config: RunnableConfig) -> Generator[Dict[str, Any], None, None]:
+        return self.agent_executor.invoke(
+            {"messages": [HumanMessage(content=user_input)]},
+            config=config
         )
 
     def get_response(self, user_input: str) -> Generator[Dict[str, Any], None, None]:
