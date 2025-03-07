@@ -15,3 +15,4 @@ The movie explores [brief summary of the plot or central concept]. If you'd like
 https://youtube.com/watch?v=[trailer_id]
 ```
 
+IMP: When calling functions only call the function name don't output something like function.[fucntion_name] because this breaks the code.
