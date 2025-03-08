@@ -8,8 +8,10 @@ from langgraph.checkpoint.memory import MemorySaver
 from typing import Generator, Dict, Any
 from langchain_core.runnables import RunnableConfig
 from typing import Optional
+from langchain_openai import ChatOpenAI
+from os import getenv
 class MovieSearchAgent:
-    def __init__(self, model_name: str = "gpt-4", model_provider: str = "openai"):
+    def __init__(self, model_name: str = "gpt-4o-mini", model_provider: str = "openai"):
         load_dotenv()
         
         # Initialize components
@@ -18,7 +20,11 @@ class MovieSearchAgent:
         self.tools = self.search_toolkit.get_tools()
         
         # Initialize model and agent
-        self.model = init_chat_model(model_name, model_provider=model_provider)
+        self.model = ChatOpenAI(
+            openai_api_key=getenv("OPENROUTER_API_KEY"),
+            openai_api_base=getenv("OPENROUTER_BASE_URL"),
+            model_name=model_name,
+        )
         self.system_message = load_system_prompt()
         self.agent_executor = create_react_agent(
             self.model,
