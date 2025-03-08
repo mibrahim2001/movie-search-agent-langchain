@@ -2,7 +2,7 @@
 
 A Langchain and Streamlit powered movie search agent that helps users find and get information about movies.
 
-![Movie Search Agent Screenshot](docs/images/app_screenshot.png)
+![Movie Search Agent Screenshot](docs/images/demo.gif)
 
 ## Features
 
