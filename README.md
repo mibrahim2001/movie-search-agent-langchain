@@ -2,7 +2,7 @@
 
 A Langchain and Streamlit powered movie search agent that helps users find and get information about movies.
 
-![Movie Search Agent Screenshot](docs/images/demo.gif)
+![Movie Search Agent Screenshot](docs/images/app-demo.gif)
 
 ## Features
 
@@ -102,8 +102,6 @@ The application will be available at http://localhost:8501
    - Plot summary
    - Trailer link
 
-![Example Query](docs/images/example_query.png)
-
 ### Comparing Movies
 
 1. Enter a query like "Compare The Matrix and Inception"
@@ -116,11 +114,10 @@ The application will be available at http://localhost:8501
 
 ## Challenges Faced
 
-[To be updated]
-
-- Challenge 1: [Description of the challenge and how it was overcome]
-- Challenge 2: [Description of the challenge and how it was overcome]
-- Challenge 3: [Description of the challenge and how it was overcome]
+- **Incomplete Search Results**: Search queries sometimes returned incomplete information (e.g., missing movie ratings), requiring prompt engineering to get more detailed information.
+- **Tool Naming Conventions**: Resolved issues with function calling by implementing proper naming conventions for tools to ensure correct invocation and prompt engineering.
+- **StreamlitCallBackHandler Compatibility**: Overcame integration challenges between the latest LangChain agent implementation and Streamlit's callback handler by implementing a custom solution based on community contributions. [Github Issue](https://github.com/langchain-ai/langgraph/issues/101)
+- **API Rate Limiting**: Faced rate limiting issues with the APIs, so implemented multiple providers e.g Google Search and DuckDuckGo.
 
 ## Contributing
 
