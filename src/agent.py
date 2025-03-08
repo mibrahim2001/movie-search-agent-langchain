@@ -17,8 +17,8 @@ class MovieSearchAgent:
         self.memory = MemorySaver()
         self.search_toolkit = SearchToolKit(search_engine)
         self.tools = self.search_toolkit.get_tools()
-        # Initialize model and agent
         
+        # Initialize model and agent
         # Check if OpenRouter environment variables are available
         openrouter_api_key = getenv("OPENROUTER_API_KEY")
         openrouter_base_url = getenv("OPENROUTER_BASE_URL")
@@ -82,7 +82,12 @@ class MovieSearchAgent:
 
 def run_cli():
     """Run the agent in CLI mode"""
-    agent = MovieSearchAgent()
+    
+    if getenv("OPENAI_API_KEY") is None and getenv("OPENROUTER_API_KEY") is None:
+        print("OPENAI_API_KEY or OPENROUTER_API_KEY is not set. Please set it in the environment variables.")
+        return
+    
+    agent = MovieSearchAgent(model_name="gpt-4o-mini", model_provider="openai", search_engine="duckduckgo")
     
     print("Movie Search Agent - Interactive Chat")
     print("Type 'exit' or 'quit' to end the conversation")
