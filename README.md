@@ -7,7 +7,7 @@ A Langchain and Streamlit powered movie search agent that helps users find and g
 ## Features
 
 - Movie search functionality with detailed information retrieval
-- Integration with Google Search and YouTube for comprehensive results
+- Integration with Google Search, DuckDuckGo and YouTube for comprehensive results
 - Real-time streaming responses
 - Interactive Streamlit interface
 - Powered by LangChain and OpenAI for intelligent processing
@@ -35,7 +35,7 @@ The application follows a modular architecture:
 - **MovieSearchAgent**: Core component that processes user queries and coordinates responses
 - **Search Tools**: Collection of tools for retrieving information from various sources
 - **LLM Model**: Language model that powers the agent's understanding and response generation
-- **External APIs**: Google Search and YouTube APIs for retrieving movie information
+- **External APIs**: Google Search, DuckDuckGo and YouTube APIs for retrieving movie information
 
 ## Setup
 
@@ -78,7 +78,8 @@ The application follows a modular architecture:
   ```
 
 5. Create a `.env` file and add your API keys, you can find required keys in the .env.example file in the root of the project.
-  Note: Google Search API and Custom Search Engine ID are optional, you can use DuckDuckGo as a search engine.
+
+Note: Google Search API and Custom Search Engine ID are optional, you can use DuckDuckGo as a search engine.
 
 ### Running the Application
 
@@ -88,6 +89,17 @@ streamlit run src/streamlit.py
 ```
 
 The application will be available at http://localhost:8501
+
+
+## Challenges Faced
+
+- **Incomplete Search Results**: Search queries sometimes returned incomplete information (e.g., missing movie ratings), requiring prompt engineering to get more detailed information.
+
+- **Tool Naming Conventions**: Resolved issues with function calling by implementing proper naming conventions for tools to ensure correct invocation and prompt engineering.
+
+- **StreamlitCallBackHandler Compatibility**: Overcame integration challenges between the latest LangChain agent implementation and Streamlit's callback handler by implementing a custom solution based on community contributions. [Github Issue](https://github.com/langchain-ai/langgraph/issues/101)
+
+- **API Rate Limiting**: Faced rate limiting issues with the APIs, so implemented multiple providers e.g Google Search and DuckDuckGo.
 
 ## Usage Examples
 
@@ -112,12 +124,7 @@ The application will be available at http://localhost:8501
 1. Enter a query like "What are some good sci-fi movies from the 90s?"
 2. The agent will search for and recommend movies matching your criteria
 
-## Challenges Faced
 
-- **Incomplete Search Results**: Search queries sometimes returned incomplete information (e.g., missing movie ratings), requiring prompt engineering to get more detailed information.
-- **Tool Naming Conventions**: Resolved issues with function calling by implementing proper naming conventions for tools to ensure correct invocation and prompt engineering.
-- **StreamlitCallBackHandler Compatibility**: Overcame integration challenges between the latest LangChain agent implementation and Streamlit's callback handler by implementing a custom solution based on community contributions. [Github Issue](https://github.com/langchain-ai/langgraph/issues/101)
-- **API Rate Limiting**: Faced rate limiting issues with the APIs, so implemented multiple providers e.g Google Search and DuckDuckGo.
 
 ## Contributing
 
