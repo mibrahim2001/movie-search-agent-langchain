@@ -17,13 +17,23 @@ class MovieSearchAgent:
         self.memory = MemorySaver()
         self.search_toolkit = SearchToolKit(search_engine)
         self.tools = self.search_toolkit.get_tools()
-        
         # Initialize model and agent
-        self.model = ChatOpenAI(
-            openai_api_key=getenv("OPENROUTER_API_KEY"),
-            openai_api_base=getenv("OPENROUTER_BASE_URL"),
-            model_name=model_name,
-        )
+        
+        # Check if OpenRouter environment variables are available
+        openrouter_api_key = getenv("OPENROUTER_API_KEY")
+        openrouter_base_url = getenv("OPENROUTER_BASE_URL")
+        
+        # Configure model with OpenRouter if available, otherwise use default OpenAI setup
+        if openrouter_api_key and openrouter_base_url:
+            self.model = ChatOpenAI(
+                model_name=model_name,
+                openai_api_key=openrouter_api_key,
+                openai_api_base=openrouter_base_url,
+            )
+        else:
+            self.model = ChatOpenAI(
+                model_name=model_name,
+            )
         self.system_message = load_system_prompt()
         self.agent_executor = create_react_agent(
             self.model,

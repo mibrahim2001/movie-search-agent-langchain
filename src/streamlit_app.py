@@ -4,6 +4,7 @@ import os
 from langchain_core.runnables import RunnableConfig
 from utility import get_streamlit_cb, generate_thread_id
 from dotenv import load_dotenv
+from os import getenv
 
 load_dotenv()
 
@@ -15,12 +16,10 @@ if "agent" not in st.session_state:
     st.session_state.agent = None
 if "messages" not in st.session_state:
     st.session_state.messages = []
-if "error" not in st.session_state:
-    st.session_state.error = None
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = generate_thread_id()
 if "search_engine" not in st.session_state:
-    st.session_state.search_engine = "google"
+    st.session_state.search_engine = "duckduckgo"
 
 # OpenAI API Key handling
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -31,39 +30,53 @@ with st.sidebar:
         user_api_key = st.text_input("OpenAI API Key", type="password")
         if user_api_key:
             openai_api_key = user_api_key
-
-# Display error message if present
-if st.session_state.error:
-    st.error(st.session_state.error)
-    if st.button("Clear Error"):
-        st.session_state.error = None
-        
+            os.environ["OPENAI_API_KEY"] = openai_api_key
 
 # Sidebar configuration
 with st.sidebar:
     # Search engine selector
     st.divider()
+    
+    # Check if Google API credentials are available
+    google_api_key = getenv("GOOGLE_API_KEY")
+    google_cse_id = getenv("GOOGLE_CSE_ID")
+    
+    # Determine available search engines based on credentials
+    available_engines = []
+    if google_api_key and google_cse_id:
+        available_engines = ["google", "duckduckgo"]
+    else:
+        available_engines = ["duckduckgo"]
+    
+    # Set default index based on available engines
+    default_index = 0
+    if st.session_state.search_engine not in available_engines:
+        st.session_state.search_engine = available_engines[0]
+    else:
+        default_index = available_engines.index(st.session_state.search_engine)
+    
     selected_engine = st.selectbox(
         "Select Search Engine",
-        ["google", "duckduckgo"],
-        index=0 if st.session_state.search_engine == "google" else 1,
+        available_engines,
+        index=default_index,
         help="Choose which search engine to use for movie searches"
     )
     
     # Reset chat button
-    if st.button("Reset Chat") or selected_engine != st.session_state.search_engine:
+    if st.button("Reset Chat") or selected_engine != st.session_state.search_engine or not st.session_state.agent:
         st.session_state.search_engine = selected_engine
         if openai_api_key:
             try:
+                print("selected engine: ", selected_engine)
                 st.session_state.agent = MovieSearchAgent(search_engine=selected_engine)
                 st.session_state.messages = []
                 st.session_state.thread_id = generate_thread_id()
                 st.session_state.messages.append({"role": "assistant", "content": "How can I help you find movies today?"})
-                st.session_state.error = None
             except Exception as e:
-                st.session_state.error = f"Failed to initialize agent: {str(e)}\n\nPlease check your API keys and try again."
+                st.error(f"Failed to initialize agent: {str(e)}\n\nPlease check your API keys and try again. If the problem persists, ensure your environment is properly configured.")
         else:
-            st.session_state.error = "Please provide your OpenAI API key to continue."
+            st.error("Please add your OpenAI API key to continue.")
+       
 
 # Display chat messages
 for message in st.session_state.messages:
@@ -73,8 +86,8 @@ for message in st.session_state.messages:
 # Chat input
 if prompt := st.chat_input(placeholder="Tell me about a movie..."):
     if not openai_api_key:
-        st.session_state.error = "Please add your OpenAI API key to continue."
-        st.experimental_rerun()
+        st.error("Please add your OpenAI API key to continue.")
+        st.stop()
 
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -100,18 +113,19 @@ if prompt := st.chat_input(placeholder="Tell me about a movie..."):
             message_placeholder.empty()
             st.write(agent_response)
             st.session_state.messages.append({"role": "assistant", "content": agent_response})
-            st.session_state.error = None
             
         except Exception as e:
             error_message = str(e)
-            st.session_state.error = f"An error occurred: {error_message}"
+            message_placeholder.empty()
             
-            # Provide more user-friendly error messages
+            # Provide user-friendly error messages with debugging details
             if "API key" in error_message.lower():
-                st.session_state.error = "There was an issue with your API key. Please check that it's valid and has sufficient credits."
+                st.error(f"⚠️ API Key Issue: There was a problem with your OpenAI API key. Please check that it's valid and has sufficient credits.\n\nTechnical details: {error_message}")
             elif "rate limit" in error_message.lower():
-                st.session_state.error = "You've reached the rate limit for API requests. Please try again in a few moments."
+                st.error(f"⚠️ Rate Limit Reached: You've reached the rate limit for API requests. Please try again in a few moments.\n\nTechnical details: {error_message}")
             elif "timeout" in error_message.lower():
-                st.session_state.error = "The request timed out. This might be due to high server load or a complex query. Please try again or simplify your question."
+                st.error(f"⚠️ Request Timeout: The request timed out. This might be due to high server load or a complex query. Please try again or simplify your question.\n\nTechnical details: {error_message}")
+            else:
+                st.error(f"⚠️ Unexpected Error: Something went wrong while processing your request. Please try again or try a different query.\n\nTechnical details: {error_message}")
             
-            message_placeholder.error("Sorry, I encountered an error. Please check the error message and try again.")
+            message_placeholder.error("Sorry, I encountered an error. Please check the error message above and try again.")
