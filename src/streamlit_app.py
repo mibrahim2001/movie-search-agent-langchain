@@ -19,6 +19,8 @@ if "error" not in st.session_state:
     st.session_state.error = None
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = generate_thread_id()
+if "search_engine" not in st.session_state:
+    st.session_state.search_engine = "google"
 
 # OpenAI API Key handling
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -37,19 +39,31 @@ if st.session_state.error:
         st.session_state.error = None
         
 
-# Initialize or reset the agent
-if st.sidebar.button("Reset Chat") or not st.session_state.agent:
-    if openai_api_key:
-        try:
-            st.session_state.agent = MovieSearchAgent()
-            st.session_state.messages = []
-            st.session_state.thread_id = generate_thread_id()
-            st.session_state.messages.append({"role": "assistant", "content": "How can I help you find movies today?"})
-            st.session_state.error = None
-        except Exception as e:
-            st.session_state.error = f"Failed to initialize agent: {str(e)}\n\nPlease check your API keys and try again."
-    else:
-        st.session_state.error = "Please provide your OpenAI API key to continue."
+# Sidebar configuration
+with st.sidebar:
+    # Search engine selector
+    st.divider()
+    selected_engine = st.selectbox(
+        "Select Search Engine",
+        ["google", "duckduckgo"],
+        index=0 if st.session_state.search_engine == "google" else 1,
+        help="Choose which search engine to use for movie searches"
+    )
+    
+    # Reset chat button
+    if st.button("Reset Chat") or selected_engine != st.session_state.search_engine:
+        st.session_state.search_engine = selected_engine
+        if openai_api_key:
+            try:
+                st.session_state.agent = MovieSearchAgent(search_engine=selected_engine)
+                st.session_state.messages = []
+                st.session_state.thread_id = generate_thread_id()
+                st.session_state.messages.append({"role": "assistant", "content": "How can I help you find movies today?"})
+                st.session_state.error = None
+            except Exception as e:
+                st.session_state.error = f"Failed to initialize agent: {str(e)}\n\nPlease check your API keys and try again."
+        else:
+            st.session_state.error = "Please provide your OpenAI API key to continue."
 
 # Display chat messages
 for message in st.session_state.messages:
@@ -73,7 +87,7 @@ if prompt := st.chat_input(placeholder="Tell me about a movie..."):
         
         try:
             st_cb = get_streamlit_cb(st.container())
-            cfg = RunnableConfig()
+            cfg = RunnableConfig(max_concurrency=1)
             cfg["callbacks"] = [st_cb]
             cfg["configurable"] = {"thread_id": st.session_state.thread_id}
             

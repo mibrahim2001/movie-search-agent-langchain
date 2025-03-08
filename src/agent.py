@@ -10,12 +10,12 @@ from typing import Optional
 from langchain_openai import ChatOpenAI
 from os import getenv
 class MovieSearchAgent:
-    def __init__(self, model_name: str = "gpt-4o-mini", model_provider: str = "openai"):
+    def __init__(self, model_name: str = "gpt-4o-mini", model_provider: str = "openai", search_engine: str = "google"):
         load_dotenv()
         
         # Initialize components
         self.memory = MemorySaver()
-        self.search_toolkit = SearchToolKit("google")
+        self.search_toolkit = SearchToolKit(search_engine)
         self.tools = self.search_toolkit.get_tools()
         
         # Initialize model and agent
