@@ -13,7 +13,6 @@ class MovieSearchAgent:
         
         # Initialize components
         self.memory = MemorySaver()
-        self.config = {"configurable": {"thread_id": "abc123"}}
         self.search_toolkit = SearchToolKit()
         self.tools = self.search_toolkit.get_tools()
         
@@ -28,25 +27,35 @@ class MovieSearchAgent:
         )
 
     def invoke_agent(self, user_input: str, config: RunnableConfig) -> Generator[Dict[str, Any], None, None]:
+        """
+        Invoke the agent to process the given user input and return a response stream.
+        
+        Args:
+            user_input (str): The user's input message to be processed by the agent.
+            config (RunnableConfig): Configuration settings for invoking the agent.
+            
+        Returns:
+            Generator[Dict[str, Any], None, None]: A generator yielding response steps from the agent.
+        """
         return self.agent_executor.invoke(
             {"messages": [HumanMessage(content=user_input)]},
             config=config
         )
 
-    def get_response(self, user_input: str) -> Generator[Dict[str, Any], None, None]:
+    def generate_response_stream(self, user_input: str, config: Optional[RunnableConfig] = None) -> Generator[Dict[str, Any], None, None]:
         """
         Get streaming response from the agent for a given user input.
         
         Args:
             user_input (str): The user's input message
-            
+            config (Optional[RunnableConfig]): Optional configuration for the response stream
         Returns:
             Generator yielding response steps
         """
         return self.agent_executor.stream(
             {"messages": [HumanMessage(content=user_input)]},
             stream_mode="values",
-            config=self.config
+            config=config
         )
 
 def run_cli():
