@@ -18,11 +18,25 @@ class SearchToolKit:
             self.google_search = Tool(
                 name="Google_Search",
                 description="Search Google for recent results.",
-                func=self._google_wrapper.run,
+                func=self._top5_google_results,
             )
         except Exception as e:
             print(f"Failed to initialize Google Search: {str(e)}")
+    
+    def _top5_google_results(self, query: str) -> List[str]:
+        """
+        Fetch the top 5 Google search results for a given query.
 
+        Args:
+            query (str): The search query string.
+
+        Returns:
+            List[str]: A list of the top 5 search result snippets.
+        """
+        if not self.google_search:
+            raise ValueError("Google Search is not initialized.")
+        return self._google_wrapper.results(query, 5)
+    
     def get_tools(self) -> List[Tool]:
         """Get all available search tools.
         
@@ -33,3 +47,5 @@ class SearchToolKit:
         if self.google_search:
             tools.append(self.google_search)
         return tools
+
+    
