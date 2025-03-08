@@ -15,7 +15,7 @@ class MovieSearchAgent:
         
         # Initialize components
         self.memory = MemorySaver()
-        self.search_toolkit = SearchToolKit()
+        self.search_toolkit = SearchToolKit("duckduckgo")
         self.tools = self.search_toolkit.get_tools()
         
         # Initialize model and agent
