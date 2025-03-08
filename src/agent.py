@@ -7,6 +7,7 @@ from utility import load_system_prompt
 from langgraph.checkpoint.memory import MemorySaver
 from typing import Generator, Dict, Any
 from langchain_core.runnables import RunnableConfig
+from typing import Optional
 class MovieSearchAgent:
     def __init__(self, model_name: str = "gpt-4", model_provider: str = "openai"):
         load_dotenv()
