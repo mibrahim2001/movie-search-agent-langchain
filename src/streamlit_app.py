@@ -67,7 +67,6 @@ with st.sidebar:
         st.session_state.search_engine = selected_engine
         if openai_api_key:
             try:
-                print("selected engine: ", selected_engine)
                 st.session_state.agent = MovieSearchAgent(search_engine=selected_engine)
                 st.session_state.messages = []
                 st.session_state.thread_id = generate_thread_id()
