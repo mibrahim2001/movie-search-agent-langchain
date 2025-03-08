@@ -5,7 +5,7 @@ from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ct
 from streamlit.delta_generator import DeltaGenerator
 
 from langchain_core.callbacks.base import BaseCallbackHandler
-import streamlit as st
+import streamlit_app as st
 
 
 # Define a function to create a callback handler for Streamlit that updates the UI dynamically

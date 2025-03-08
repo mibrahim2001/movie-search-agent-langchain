@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit_app as st
 from agent import MovieSearchAgent
 import os
 from langchain_core.runnables import RunnableConfig
