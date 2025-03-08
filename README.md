@@ -113,6 +113,13 @@ The application will be available at http://localhost:8501
 1. Enter a query like "What are some good sci-fi movies from the 90s?"
 2. The agent will search for and recommend movies matching your criteria
 
+## Challenges Faced
+
+[To be updated]
+
+- Challenge 1: [Description of the challenge and how it was overcome]
+- Challenge 2: [Description of the challenge and how it was overcome]
+- Challenge 3: [Description of the challenge and how it was overcome]
 
 ## Contributing
 
