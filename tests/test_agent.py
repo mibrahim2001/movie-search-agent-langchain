@@ -1,5 +1,5 @@
 import pytest
-from src.agent import MovieSearchAgent
+from agent import MovieSearchAgent
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 

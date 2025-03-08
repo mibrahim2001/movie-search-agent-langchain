@@ -1,4 +1,4 @@
-from src.utility.utils import load_system_prompt, generate_thread_id
+from utility.utils import load_system_prompt, generate_thread_id
 
 def test_load_system_prompt():
     """Test that system prompt can be loaded successfully."""

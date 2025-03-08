@@ -1,5 +1,5 @@
 import pytest
-from src.utility.st_callable_util import get_streamlit_cb
+from utility.st_callable_util import get_streamlit_cb
 from streamlit.delta_generator import DeltaGenerator
 from unittest.mock import MagicMock, patch
 

@@ -1,4 +1,4 @@
-from src.tools.search_tool_kit import SearchToolKit
+from tools.search_tool_kit import SearchToolKit
 from langchain_core.tools import Tool, BaseTool
 
 def test_search_toolkit_initialization():
