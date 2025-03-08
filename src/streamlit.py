@@ -4,9 +4,11 @@ import os
 from langchain_core.runnables import RunnableConfig
 from utility import get_streamlit_cb
 from dotenv import load_dotenv
+
 load_dotenv()
+
 st.set_page_config(page_title="Movie Search Agent", page_icon="🎬")
-st.title("Movie Search Agent")
+st.title("🎬 Movie Search Agent")
 
 # Initialize session state
 if "agent" not in st.session_state:
