@@ -2,7 +2,7 @@ import streamlit as st
 from agent import MovieSearchAgent
 import os
 from langchain_core.runnables import RunnableConfig
-from utility import get_streamlit_cb
+from utility import get_streamlit_cb, generate_thread_id
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,6 +17,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "error" not in st.session_state:
     st.session_state.error = None
+if "thread_id" not in st.session_state:
+    st.session_state.thread_id = generate_thread_id()
 
 # OpenAI API Key handling
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -41,6 +43,7 @@ if st.sidebar.button("Reset Chat") or not st.session_state.agent:
         try:
             st.session_state.agent = MovieSearchAgent()
             st.session_state.messages = []
+            st.session_state.thread_id = generate_thread_id()
             st.session_state.messages.append({"role": "assistant", "content": "How can I help you find movies today?"})
             st.session_state.error = None
         except Exception as e:
@@ -72,7 +75,7 @@ if prompt := st.chat_input(placeholder="Tell me about a movie..."):
             st_cb = get_streamlit_cb(st.container())
             cfg = RunnableConfig()
             cfg["callbacks"] = [st_cb]
-            cfg["configurable"] = {"thread_id": "abc123"}
+            cfg["configurable"] = {"thread_id": st.session_state.thread_id}
             
             # Show a loader
             with st.spinner("Let me cook..."):
