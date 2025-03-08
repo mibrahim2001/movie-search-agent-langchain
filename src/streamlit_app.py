@@ -1,4 +1,4 @@
-import streamlit_app as st
+import streamlit as st
 from agent import MovieSearchAgent
 import os
 from langchain_core.runnables import RunnableConfig
@@ -52,7 +52,7 @@ if prompt := st.chat_input(placeholder="Tell me about a movie..."):
         cfg = RunnableConfig()
         cfg["callbacks"] = [st_cb]
         cfg["configurable"] = {"thread_id": "abc123"}
-        response = st.session_state.agent.invoke_agent(prompt, cfg)
+        response = st.session_state.agent.get_complete_response(prompt, cfg)
         print(response)
         agent_response = response["messages"][-1].content
         st.write(agent_response)

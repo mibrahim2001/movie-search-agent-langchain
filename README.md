@@ -2,14 +2,65 @@
 
 A Langchain and Streamlit powered movie search agent that helps users find and get information about movies.
 
+![Movie Search Agent Screenshot](docs/images/app_screenshot.png)
+
+## Features
+
+- Movie search functionality with detailed information retrieval
+- Integration with Google Search and YouTube for comprehensive results
+- Real-time streaming responses
+- Interactive Streamlit interface
+- Powered by LangChain and OpenAI for intelligent processing
+
+## Architecture
+
+The application follows a modular architecture:
+
+```ascii
+┌─────────────────┐     ┌───────────────────┐     ┌───────────────────┐
+│                 │     │                   │     │                   │
+│  Streamlit UI   │────▶│  MovieSearchAgent │────▶│  Search Tools     │
+│                 │     │                   │     │                   │
+└─────────────────┘     └───────────────────┘     └───────────────────┘
+                               │                          │
+                               ▼                          ▼
+                        ┌─────────────┐           ┌─────────────────┐
+                        │             │           │                 │
+                        │  LLM Model  │           │  External APIs  │
+                        │             │           │                 │
+                        └─────────────┘           └─────────────────┘
+```
+
+- **Streamlit UI**: Provides the user interface for interacting with the agent
+- **MovieSearchAgent**: Core component that processes user queries and coordinates responses
+- **Search Tools**: Collection of tools for retrieving information from various sources
+- **LLM Model**: Language model that powers the agent's understanding and response generation
+- **External APIs**: Google Search and YouTube APIs for retrieving movie information
+
 ## Setup
 
-1. Create a virtual environment:
+### Prerequisites
+
+- Python 3.8 or higher
+- API keys for:
+  - OpenAI or OpenRouter (for the language model)
+  - Google Search API
+  - Google Custom Search Engine ID
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/movie-search-agent.git
+cd movie-search-agent
+```
+
+2. Create a virtual environment:
 ```bash
 python -m venv .venv
 ```
 
-2. Activate the virtual environment:
+3. Activate the virtual environment:
 
 Windows (PowerShell):
 ```powershell
@@ -21,40 +72,47 @@ Mac/Linux:
 source .venv/bin/activate
 ```
 
-3. Install dependencies:
+4. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file and add your API keys:
-```
-OPENAI_API_KEY=your_key_here
-```
+5. Create a `.env` file and add your API keys:
 
-5. Run the Streamlit app:
+### Running the Application
+
+Start the Streamlit app:
 ```bash
-streamlit run src/streamlit_app.py
+streamlit run src/streamlit.py
 ```
 
-## Project Structure
+The application will be available at http://localhost:8501
 
-```
-project_root/
-├── src/
-│   ├── agents/           # Agent-related code
-│   ├── chains/           # Langchain chains
-│   ├── config/           # Configuration files
-│   ├── utils/            # Utility functions
-│   └── streamlit_app.py  # Main Streamlit application
-└── tests/                # Test directory
-```
+## Usage Examples
 
-## Features
+### Finding Movie Information
 
-- Movie search functionality
-- Detailed movie information retrieval
-- Interactive Streamlit interface
-- Powered by LangChain for intelligent processing
+1. Enter a query like "Tell me about Inception"
+2. The agent will search for information about the movie and return details including:
+   - Release date
+   - Director and cast
+   - IMDB rating
+   - Genre
+   - Plot summary
+   - Trailer link
+
+![Example Query](docs/images/example_query.png)
+
+### Comparing Movies
+
+1. Enter a query like "Compare The Matrix and Inception"
+2. The agent will search for information about both movies and provide a comparison
+
+### Finding Movies by Criteria
+
+1. Enter a query like "What are some good sci-fi movies from the 90s?"
+2. The agent will search for and recommend movies matching your criteria
+
 
 ## Contributing
 
@@ -62,4 +120,8 @@ project_root/
 2. Create your feature branch
 3. Commit your changes
 4. Push to the branch
-5. Create a new Pull Request 
+5. Create a new Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
