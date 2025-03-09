@@ -5,11 +5,18 @@ from langchain_core.runnables import RunnableConfig
 from utility import get_streamlit_cb, generate_thread_id
 from dotenv import load_dotenv
 from os import getenv
+from config import (
+    PAGE_TITLE, 
+    PAGE_ICON, 
+    API_KEY_MASK, 
+    DEFAULT_SEARCH_ENGINE,
+    AVAILABLE_SEARCH_ENGINES
+)
 
 load_dotenv()
 
-st.set_page_config(page_title="Movie Search Agent", page_icon="🎬")
-st.title("🎬 Movie Search Agent")
+st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON)
+st.title(f"{PAGE_ICON} {PAGE_TITLE}")
 
 # Initialize session state
 if "agent" not in st.session_state:
@@ -19,13 +26,13 @@ if "messages" not in st.session_state:
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = generate_thread_id()
 if "search_engine" not in st.session_state:
-    st.session_state.search_engine = "duckduckgo"
+    st.session_state.search_engine = DEFAULT_SEARCH_ENGINE
 
 # OpenAI API Key handling
 openai_api_key = os.getenv("OPENAI_API_KEY")
 with st.sidebar:
     if openai_api_key:
-        st.text_input("OpenAI API Key (already set in environment)", value="••••••••••••••••••••••••", disabled=True)
+        st.text_input("OpenAI API Key (already set in environment)", value=API_KEY_MASK, disabled=True)
     else:
         user_api_key = st.text_input("OpenAI API Key", type="password")
         if user_api_key:
@@ -37,16 +44,12 @@ with st.sidebar:
     # Search engine selector
     st.divider()
     
-    # Check if Google API credentials are available
-    google_api_key = getenv("GOOGLE_API_KEY")
-    google_cse_id = getenv("GOOGLE_CSE_ID")
-    
     # Determine available search engines based on credentials
-    available_engines = []
-    if google_api_key and google_cse_id:
-        available_engines = ["google", "duckduckgo"]
-    else:
-        available_engines = ["duckduckgo"]
+    available_engines = ["duckduckgo"]  # DuckDuckGo is always available
+    
+    # Check if Google is available
+    if all(getenv(env_var) for env_var in AVAILABLE_SEARCH_ENGINES["google"]):
+        available_engines.append("google")
     
     # Set default index based on available engines
     default_index = 0
@@ -75,7 +78,6 @@ with st.sidebar:
                 st.error(f"Failed to initialize agent: {str(e)}\n\nPlease check your API keys and try again. If the problem persists, ensure your environment is properly configured.")
         else:
             st.error("Please add your OpenAI API key to continue.")
-       
 
 # Display chat messages
 for message in st.session_state.messages:

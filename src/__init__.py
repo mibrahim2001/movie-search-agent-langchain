@@ -1,3 +1,0 @@
-"""
-Movie Search Agent package.
-""" 
