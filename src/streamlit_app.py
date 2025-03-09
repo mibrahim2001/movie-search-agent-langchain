@@ -97,7 +97,7 @@ if prompt := st.chat_input(placeholder="Tell me about a movie..."):
         
         try:
             st_cb = get_streamlit_cb(st.container())
-            cfg = RunnableConfig(max_concurrency=1)
+            cfg = RunnableConfig(max_concurrency=1, recursion_limit=15)
             cfg["callbacks"] = [st_cb]
             cfg["configurable"] = {"thread_id": st.session_state.thread_id}
             
@@ -122,6 +122,8 @@ if prompt := st.chat_input(placeholder="Tell me about a movie..."):
                 st.error(f"⚠️ Rate Limit Reached: You've reached the rate limit for API requests. Please try again in a few moments.\n\nTechnical details: {error_message}")
             elif "timeout" in error_message.lower():
                 st.error(f"⚠️ Request Timeout: The request timed out. This might be due to high server load or a complex query. Please try again or simplify your question.\n\nTechnical details: {error_message}")
+            elif "recursion limit" in error_message.lower():
+                st.error(f"⚠️ Took too many requests please try a different query.\n\nTechnical details: {error_message}")
             else:
                 st.error(f"⚠️ Unexpected Error: Something went wrong while processing your request. Please try again or try a different query.\n\nTechnical details: {error_message}")
             
