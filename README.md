@@ -50,36 +50,34 @@ The application follows a modular architecture:
 ### Installation
 
 1. Clone the repository:
-  ```bash
-  git clone https://github.com/yourusername/movie-search-agent.git
-  cd movie-search-agent
-  ```
+    ```bash
+    git clone https://github.com/yourusername/movie-search-agent.git
+    cd movie-search-agent
+    ```
 
 2. Create a virtual environment:
-  ```bash
-  python -m venv .venv
-  ```
+    ```bash
+    python -m venv .venv
+    ```
 
 3. Activate the virtual environment:
-
-  Windows (PowerShell):
-  ```powershell
-  .venv\Scripts\Activate.ps1
-  ```
-
-  Mac/Linux:
-  ```bash
-  source .venv/bin/activate
-  ```
+    Windows (PowerShell):
+    ```powershell
+    .venv\Scripts\Activate.ps1
+    ```
+    Mac/Linux:
+    ```bash
+    source .venv/bin/activate
+    ```
 
 4. Install dependencies:
-  ```bash
-  pip install -r requirements.txt
-  ```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 5. Create a `.env` file and add your API keys, you can find required keys in the .env.example file in the root of the project.
 
-Note: Google Search API and Custom Search Engine ID are optional, you can use DuckDuckGo as a search engine.
+*Note: Google Search API and Custom Search Engine ID are optional, you can use DuckDuckGo as a search engine.*
 
 ### Running the Application
 
