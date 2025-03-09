@@ -77,6 +77,17 @@ def get_streamlit_cb(parent_container: DeltaGenerator) -> BaseCallbackHandler:
             if self.tool_output_placeholder:
                 self.tool_output_placeholder.code(output.content)   # Display the tool's output
 
+        def on_tool_error(self, error: BaseException, **kwargs: Any) -> None:
+            """
+            Run when a tool encounters an error.
+            Args:
+                error (BaseException): The error that occurred.
+                kwargs (Any): Additional keyword arguments.
+            """
+            if self.tool_output_placeholder:
+                # Display the error in red with an error icon
+                self.tool_output_placeholder.error(f"🚨 Tool Error: {str(error)}")
+
     # Define a type variable for generic type hinting in the decorator, to maintain
     # input function and wrapped function return type
     fn_return_type = TypeVar('fn_return_type')
