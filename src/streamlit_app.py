@@ -1,17 +1,13 @@
-import streamlit as st
-from agent import MovieSearchAgent
 import os
-from langchain_core.runnables import RunnableConfig
-from utility import get_streamlit_cb, generate_thread_id
+
+import streamlit as st
 from dotenv import load_dotenv
-from os import getenv
-from config import (
-    PAGE_TITLE, 
-    PAGE_ICON, 
-    API_KEY_MASK, 
-    DEFAULT_SEARCH_ENGINE,
-    AVAILABLE_SEARCH_ENGINES
-)
+from langchain_core.runnables import RunnableConfig
+
+from agent import MovieSearchAgent
+from config import (API_KEY_MASK, AVAILABLE_SEARCH_ENGINES,
+                    DEFAULT_SEARCH_ENGINE, PAGE_ICON, PAGE_TITLE)
+from utility import generate_thread_id, get_streamlit_cb
 
 load_dotenv()
 
@@ -48,7 +44,7 @@ with st.sidebar:
     available_engines = ["duckduckgo"]  # DuckDuckGo is always available
     
     # Check if Google is available
-    if all(getenv(env_var) for env_var in AVAILABLE_SEARCH_ENGINES["google"]):
+    if all(os.getenv(env_var) for env_var in AVAILABLE_SEARCH_ENGINES["google"]):
         available_engines.append("google")
     
     # Set default index based on available engines

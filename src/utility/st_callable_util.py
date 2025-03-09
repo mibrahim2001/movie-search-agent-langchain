@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar, Any, Dict, Optional
+from typing import Callable, TypeVar, Any, Dict
 import inspect
 
 from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
