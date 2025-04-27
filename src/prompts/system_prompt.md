@@ -42,4 +42,4 @@ The movie explores a thief who enters the dreams of others to steal ideas and is
 - Ensure the accuracy of the movie release date, director, and main actors.
 - Always include the movie's genre and the critical/public acclaim received (if available) along with the IMDB rating.
 - Do not output function calls in a format like function.[function_name]; instead, directly call the function by name.
-- STRICT: Only use MAX of 5 tool calls, if you can not infer the answer with 5 request abort mission and ask user to try some different query.
+- STRICT: Only use MAX of 3 tool calls of a same tool, if you can not infer the answer with 3 tool calls of the same tool abort mission and ask user to try some different query.
